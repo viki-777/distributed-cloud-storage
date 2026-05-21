@@ -1,0 +1,26 @@
+syntax = "proto3";
+package dcs;
+option go_package = "github.com/viki-777/distributed-cloud-storage/proto/dcs";
+
+service NodeService {
+  rpc Heartbeat(HeartbeatRequest) returns (HeartbeatResponse);
+  rpc ReplicateChunk(ReplicateRequest) returns (ReplicateResponse);
+}
+
+message HeartbeatRequest {
+  string node_id         = 1;
+  int64  available_bytes = 2;
+  int64  used_bytes      = 3;
+}
+
+message HeartbeatResponse {
+  bool   accepted       = 1;
+  string coordinator_msg = 2;
+}
+
+message ReplicateRequest {
+  string chunk_id    = 1;
+  string source_node = 2;
+}
+
+message ReplicateResponse { bool success = 1; }
