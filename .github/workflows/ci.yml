@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  go-coordinator:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+      - name: Vet
+        run: go vet ./...
+        working-directory: ./coordinator
+      - name: Test
+        run: go test ./...
+        working-directory: ./coordinator
+
+  go-storagenode:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+      - name: Vet
+        run: go vet ./...
+        working-directory: ./storagenode
+      - name: Test
+        run: go test ./...
+        working-directory: ./storagenode
+
+  client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+        working-directory: ./client
+      - run: npm test --if-present
+        working-directory: ./client
+
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build coordinator
+        run: docker build -t dcs-coordinator ./coordinator
+      - name: Build storagenode
+        run: docker build -t dcs-storagenode ./storagenode
