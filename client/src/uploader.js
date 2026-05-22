@@ -23,7 +23,7 @@ function getChunkClient(address) {
 function uploadChunkToNode(client, chunk) {
     return new Promise((resolve, reject) => {
         client.UploadChunk({
-            chunk_id: chunk.chunkId,
+            chunk_id: chunk.chunk_id,
             data: chunk.buffer,
             checksum: chunk.checksum,
         }, (err, response) => {
@@ -57,6 +57,7 @@ async function upload(filePath) {
         const assignment = uploadPlan[chunk.index];
         console.log(`  Uploading chunk ${chunk.index} to ${assignment.nodes.length} nodes...`);
 
+        chunk.chunk_id = assignment.chunk_id;
         for (const nodeAddr of assignment.nodes) {
             const client = getChunkClient(nodeAddr);
             await uploadChunkToNode(client, chunk);
@@ -65,7 +66,7 @@ async function upload(filePath) {
             // 3. Confirm to coordinator
             await axios.post(
                 `${COORDINATOR}/api/v1/files/${fileId}/chunks/${assignment.chunk_id}/confirm`,
-                { node_id: nodeAddr, checksum: chunk.checksum }
+                { node_id: nodeAddr.split(':')[0], checksum: chunk.checksum }
             );
         }
     }

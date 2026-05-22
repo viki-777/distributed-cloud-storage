@@ -1,4 +1,4 @@
-FROM golang:1.22-alpine AS builder
+FROM golang:1.25-alpine AS builder
 WORKDIR /app
 
 # Copy proto module first
@@ -10,6 +10,7 @@ COPY coordinator/go.mod coordinator/go.sum* ./coordinator/
 WORKDIR /app/coordinator
 RUN go mod download
 COPY coordinator/ .
+RUN go mod tidy
 RUN CGO_ENABLED=0 go build -o coordinator ./cmd/main.go
 
 FROM alpine:3.19

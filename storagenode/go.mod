@@ -1,6 +1,6 @@
 module github.com/viki-777/distributed-cloud-storage/storagenode
 
-go 1.22.0
+go 1.25.0
 
 require (
 	github.com/viki-777/distributed-cloud-storage/proto v0.0.0

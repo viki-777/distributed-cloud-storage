@@ -1,4 +1,4 @@
-FROM golang:1.22-alpine AS builder
+FROM golang:1.25-alpine AS builder
 WORKDIR /app
 
 # Copy proto module first
@@ -10,6 +10,7 @@ COPY storagenode/go.mod storagenode/go.sum* ./storagenode/
 WORKDIR /app/storagenode
 RUN go mod download
 COPY storagenode/ .
+RUN go mod tidy
 RUN CGO_ENABLED=0 go build -o storagenode ./cmd/main.go
 
 FROM alpine:3.19

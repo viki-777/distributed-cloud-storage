@@ -21,7 +21,7 @@ services:
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
+      - "6380:6379"
 
   coordinator:
     build:
@@ -40,6 +40,7 @@ services:
         condition: service_started
 
   node1:
+    hostname: node-001
     build:
       context: .
       dockerfile: storagenode/Dockerfile
@@ -56,6 +57,7 @@ services:
       - coordinator
 
   node2:
+    hostname: node-002
     build:
       context: .
       dockerfile: storagenode/Dockerfile
@@ -72,6 +74,7 @@ services:
       - coordinator
 
   node3:
+    hostname: node-003
     build:
       context: .
       dockerfile: storagenode/Dockerfile
