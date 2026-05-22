@@ -13,6 +13,7 @@ import (
 	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/grpcserver"
 	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/metadata"
 	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/registry"
+	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/replication"
 	pb "github.com/viki-777/distributed-cloud-storage/proto/dcs"
 	"google.golang.org/grpc"
 	"net"
@@ -57,8 +58,9 @@ func main() {
 
 	metadataSvc := metadata.NewService(pool)
 	registrySvc := registry.NewService(pool, rdb)
+	healerSvc := replication.NewHealer(metadataSvc, registrySvc)
 
-	watcher := registry.NewWatcher(registrySvc)
+	watcher := registry.NewWatcher(registrySvc, healerSvc)
 	go watcher.Watch(ctx)
 
 	handler := api.NewHandler(metadataSvc, registrySvc)

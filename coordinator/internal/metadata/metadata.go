@@ -94,3 +94,48 @@ func (s *Service) GetChunkLocations(ctx context.Context, fileID string) ([]model
 	})
 	return plan, nil
 }
+
+func (s *Service) ChunksOnNode(ctx context.Context, nodeID string) ([]string, error) {
+	rows, err := s.db.Query(ctx,
+		`SELECT chunk_id FROM chunk_locations WHERE node_id = $1 AND status = 'healthy'`,
+		nodeID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var chunks []string
+	for rows.Next() {
+		var chunkID string
+		if err := rows.Scan(&chunkID); err != nil {
+			return nil, err
+		}
+		chunks = append(chunks, chunkID)
+	}
+	return chunks, nil
+}
+
+func (s *Service) HealthyLocationsForChunk(ctx context.Context, chunkID string) ([]models.Node, error) {
+	rows, err := s.db.Query(ctx,
+		`SELECT n.id, n.address, n.available_bytes, n.used_bytes, n.status, n.last_heartbeat 
+		 FROM nodes n
+		 JOIN chunk_locations cl ON n.id = cl.node_id
+		 WHERE cl.chunk_id = $1 AND cl.status = 'healthy' AND n.status = 'active'`,
+		chunkID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var nodes []models.Node
+	for rows.Next() {
+		var n models.Node
+		if err := rows.Scan(&n.ID, &n.Address, &n.AvailableBytes, &n.UsedBytes, &n.Status, &n.LastHeartbeat); err != nil {
+			return nil, err
+		}
+		nodes = append(nodes, n)
+	}
+	return nodes, nil
+}

@@ -51,6 +51,7 @@ func main() {
 
 	s := grpc.NewServer()
 	pb.RegisterChunkServiceServer(s, grpcserver.NewChunkServer(store))
+	pb.RegisterNodeServiceServer(s, grpcserver.NewNodeServer(store))
 
 	log.Printf("Storage Node %s starting gRPC on :%s", nodeID, grpcPort)
 	if err := s.Serve(lis); err != nil {

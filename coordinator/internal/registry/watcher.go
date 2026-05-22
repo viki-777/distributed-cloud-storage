@@ -6,12 +6,17 @@ import (
 	"time"
 )
 
-type Watcher struct {
-	registry *Service
+type Healer interface {
+	TriggerHeal(ctx context.Context, deadNodeID string)
 }
 
-func NewWatcher(registry *Service) *Watcher {
-	return &Watcher{registry: registry}
+type Watcher struct {
+	registry *Service
+	healer   Healer
+}
+
+func NewWatcher(registry *Service, healer Healer) *Watcher {
+	return &Watcher{registry: registry, healer: healer}
 }
 
 func (w *Watcher) Watch(ctx context.Context) {
@@ -41,8 +46,8 @@ func (w *Watcher) Watch(ctx context.Context) {
 					if err := w.registry.MarkNodeDead(ctx, node.ID); err != nil {
 						log.Printf("Watcher failed to mark node %s dead: %v", node.ID, err)
 					} else {
-						// TODO: trigger healer here
-						log.Printf("Watcher marked node %s as dead", node.ID)
+						w.healer.TriggerHeal(ctx, node.ID)
+						log.Printf("Watcher marked node %s as dead and triggered healer", node.ID)
 					}
 				}
 			}
