@@ -26,6 +26,10 @@ func main() {
 	if coordinatorURL == "" {
 		coordinatorURL = "http://localhost:8080"
 	}
+	coordinatorGRPC := os.Getenv("COORDINATOR_GRPC_URL")
+	if coordinatorGRPC == "" {
+		coordinatorGRPC = "localhost:50050"
+	}
 	storageDir := os.Getenv("STORAGE_DIR")
 	if storageDir == "" {
 		storageDir = "./data/chunks"
@@ -37,7 +41,7 @@ func main() {
 	}
 
 	grpcAddr := fmt.Sprintf("%s:%s", nodeID, grpcPort)
-	hb := heartbeat.NewHeartbeater(nodeID, coordinatorURL, grpcAddr)
+	hb := heartbeat.NewHeartbeater(nodeID, coordinatorURL, coordinatorGRPC, grpcAddr)
 	go hb.Start()
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", grpcPort))

@@ -6,15 +6,17 @@ import (
 	"sort"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/redis/go-redis/v9"
 	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/models"
 )
 
 type Service struct {
-	db *pgxpool.Pool
+	db    *pgxpool.Pool
+	redis *redis.Client
 }
 
-func NewService(db *pgxpool.Pool) *Service {
-	return &Service{db: db}
+func NewService(db *pgxpool.Pool, rdb *redis.Client) *Service {
+	return &Service{db: db, redis: rdb}
 }
 
 func (s *Service) RegisterNode(ctx context.Context, nodeID, address string, availableBytes int64) error {
