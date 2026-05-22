@@ -28,6 +28,7 @@ func NewRouter(h *Handler) *chi.Mux {
 		r.Route("/nodes", func(r chi.Router) {
 			r.Get("/", h.ListNodes)
 			r.Post("/register", h.RegisterNode)
+			r.Post("/{nodeID}/drain", h.DrainNode)
 		})
 	})
 

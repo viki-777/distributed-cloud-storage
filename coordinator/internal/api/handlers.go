@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -198,4 +199,28 @@ func (h *Handler) ReportCorruption(w http.ResponseWriter, r *http.Request) {
 	
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"status": "reported"})
+}
+
+// POST /api/v1/nodes/{nodeID}/drain
+func (h *Handler) DrainNode(w http.ResponseWriter, r *http.Request) {
+	nodeID := chi.URLParam(r, "nodeID")
+
+	ctx := r.Context()
+	
+	// Mark node as draining in DB
+	if err := h.registry.MarkNodeDraining(ctx, nodeID); err != nil {
+		log.Printf("error marking node %s as draining: %v", nodeID, err)
+		http.Error(w, "internal error", http.StatusInternalServerError)
+		return
+	}
+
+	// Trigger the healer to migrate chunks off this node
+	// The Healer's TriggerHeal method treats the node as dead (since its status != active)
+	// and will re-replicate all its chunks to other nodes.
+	go h.healer.TriggerHeal(context.Background(), nodeID)
+
+	log.Printf("Node %s is now draining. Migration started.", nodeID)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"status": "draining"})
 }

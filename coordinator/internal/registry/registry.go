@@ -29,6 +29,14 @@ func (s *Service) RegisterNode(ctx context.Context, nodeID, address string, avai
 	return err
 }
 
+func (s *Service) MarkNodeDraining(ctx context.Context, nodeID string) error {
+	_, err := s.db.Exec(ctx,
+		`UPDATE nodes SET status = 'draining' WHERE id = $1`,
+		nodeID,
+	)
+	return err
+}
+
 func (s *Service) HealthyNodes(ctx context.Context) ([]models.Node, error) {
 	rows, err := s.db.Query(ctx,
 		`SELECT id, address, available_bytes, used_bytes, status, last_heartbeat 
