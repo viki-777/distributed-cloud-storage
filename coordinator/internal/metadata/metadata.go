@@ -139,3 +139,11 @@ func (s *Service) HealthyLocationsForChunk(ctx context.Context, chunkID string) 
 	}
 	return nodes, nil
 }
+
+func (s *Service) MarkChunkCorrupted(ctx context.Context, chunkID, nodeID string) error {
+	_, err := s.db.Exec(ctx,
+		`UPDATE chunk_locations SET status = 'corrupted' WHERE chunk_id = $1 AND node_id = $2`,
+		chunkID, nodeID,
+	)
+	return err
+}

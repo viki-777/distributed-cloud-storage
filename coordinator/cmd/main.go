@@ -63,7 +63,7 @@ func main() {
 	watcher := registry.NewWatcher(registrySvc, healerSvc)
 	go watcher.Watch(ctx)
 
-	handler := api.NewHandler(metadataSvc, registrySvc)
+	handler := api.NewHandler(metadataSvc, registrySvc, healerSvc)
 	router := api.NewRouter(handler)
 
 	// Start gRPC server

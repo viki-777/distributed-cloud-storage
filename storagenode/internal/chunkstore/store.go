@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
+	"io/fs"
 	"os"
 	"path/filepath"
 )
@@ -55,6 +56,20 @@ func (s *ChunkStore) Exists(chunkID string) bool {
 
 func (s *ChunkStore) Delete(chunkID string) error {
 	return os.Remove(s.chunkPath(chunkID))
+}
+
+func (s *ChunkStore) ListAllChunks() []string {
+	var chunks []string
+	filepath.WalkDir(s.baseDir, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return nil
+		}
+		if !d.IsDir() && filepath.Ext(path) != ".tmp" {
+			chunks = append(chunks, d.Name())
+		}
+		return nil
+	})
+	return chunks
 }
 
 func (s *ChunkStore) chunkPath(chunkID string) string {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
@@ -11,6 +12,7 @@ import (
 	"github.com/viki-777/distributed-cloud-storage/storagenode/internal/chunkstore"
 	"github.com/viki-777/distributed-cloud-storage/storagenode/internal/grpcserver"
 	"github.com/viki-777/distributed-cloud-storage/storagenode/internal/heartbeat"
+	"github.com/viki-777/distributed-cloud-storage/storagenode/internal/integrity"
 )
 
 func main() {
@@ -43,6 +45,9 @@ func main() {
 	grpcAddr := fmt.Sprintf("%s:%s", nodeID, grpcPort)
 	hb := heartbeat.NewHeartbeater(nodeID, coordinatorURL, coordinatorGRPC, grpcAddr)
 	go hb.Start()
+
+	checker := integrity.NewChecker(nodeID, coordinatorURL, store)
+	go checker.RunPeriodic(context.Background())
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", grpcPort))
 	if err != nil {

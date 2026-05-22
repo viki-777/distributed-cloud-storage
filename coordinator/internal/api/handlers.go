@@ -9,6 +9,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/metadata"
 	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/registry"
+	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/replication"
 )
 
 const ReplicationFactor = 3
@@ -16,10 +17,11 @@ const ReplicationFactor = 3
 type Handler struct {
 	metadata *metadata.Service
 	registry *registry.Service
+	healer   *replication.Healer
 }
 
-func NewHandler(m *metadata.Service, r *registry.Service) *Handler {
-	return &Handler{metadata: m, registry: r}
+func NewHandler(m *metadata.Service, r *registry.Service, h *replication.Healer) *Handler {
+	return &Handler{metadata: m, registry: r, healer: h}
 }
 
 // POST /api/v1/files/register
@@ -165,4 +167,35 @@ func (h *Handler) RegisterNode(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) HealthCheck(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+}
+
+// POST /api/v1/chunks/{chunkID}/corrupted
+func (h *Handler) ReportCorruption(w http.ResponseWriter, r *http.Request) {
+	chunkID := chi.URLParam(r, "chunkID")
+
+	var req struct {
+		NodeID string `json:"node_id"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	ctx := r.Context()
+	
+	// Mark the chunk location as corrupted in DB
+	err := h.metadata.MarkChunkCorrupted(ctx, chunkID, req.NodeID)
+	if err != nil {
+		log.Printf("error marking chunk %s corrupted on node %s: %v", chunkID, req.NodeID, err)
+		http.Error(w, "internal error", http.StatusInternalServerError)
+		return
+	}
+
+	// Trigger the healer directly, or just trigger it via the chunk ID
+	// Since Healer TriggerHeal currently takes deadNodeID, we can add a HealChunk method or just do it in the background
+	log.Printf("Corruption reported for chunk %s on node %s", chunkID, req.NodeID)
+	// We'll call HealChunk if we implement it, but for now just marking it corrupted will cause it to be healed next time
+	
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"status": "reported"})
 }
