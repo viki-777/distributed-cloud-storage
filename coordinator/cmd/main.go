@@ -12,6 +12,7 @@ import (
 	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/api"
 	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/grpcserver"
 	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/metadata"
+	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/metrics"
 	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/registry"
 	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/replication"
 	pb "github.com/viki-777/distributed-cloud-storage/proto/dcs"
@@ -62,6 +63,9 @@ func main() {
 
 	watcher := registry.NewWatcher(registrySvc, healerSvc)
 	go watcher.Watch(ctx)
+
+	// Start Prometheus metrics background updater
+	metrics.StartMetricsUpdater(ctx, pool)
 
 	handler := api.NewHandler(metadataSvc, registrySvc, healerSvc)
 	router := api.NewRouter(handler)
