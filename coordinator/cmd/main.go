@@ -4,10 +4,12 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"os"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/redis/go-redis/v9"
 	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/api"
 	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/grpcserver"
@@ -17,7 +19,6 @@ import (
 	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/replication"
 	pb "github.com/viki-777/distributed-cloud-storage/proto/dcs"
 	"google.golang.org/grpc"
-	"net"
 )
 
 func main() {
@@ -66,6 +67,16 @@ func main() {
 
 	// Start Prometheus metrics background updater
 	metrics.StartMetricsUpdater(ctx, pool)
+
+	// Expose Prometheus metrics on port 9090
+	go func() {
+		metricsMux := http.NewServeMux()
+		metricsMux.Handle("/metrics", promhttp.Handler())
+		log.Printf("Coordinator metrics server starting on :9090")
+		if err := http.ListenAndServe(":9090", metricsMux); err != nil {
+			log.Fatalf("metrics server failed: %v", err)
+		}
+	}()
 
 	handler := api.NewHandler(metadataSvc, registrySvc, healerSvc)
 	router := api.NewRouter(handler)
