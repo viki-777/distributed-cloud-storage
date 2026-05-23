@@ -13,6 +13,7 @@ import (
 	"github.com/viki-777/distributed-cloud-storage/storagenode/internal/grpcserver"
 	"github.com/viki-777/distributed-cloud-storage/storagenode/internal/heartbeat"
 	"github.com/viki-777/distributed-cloud-storage/storagenode/internal/integrity"
+	"github.com/viki-777/distributed-cloud-storage/storagenode/internal/metrics"
 )
 
 func main() {
@@ -48,6 +49,9 @@ func main() {
 
 	checker := integrity.NewChecker(nodeID, coordinatorURL, store)
 	go checker.RunPeriodic(context.Background())
+
+	// Start Prometheus metrics background updater
+	metrics.StartMetricsUpdater(context.Background(), store)
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", grpcPort))
 	if err != nil {
