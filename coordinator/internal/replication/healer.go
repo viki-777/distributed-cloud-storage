@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/metadata"
+	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/metrics"
 	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/models"
 	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/registry"
 	pb "github.com/viki-777/distributed-cloud-storage/proto/dcs"
@@ -25,6 +26,7 @@ func NewHealer(m *metadata.Service, r *registry.Service) *Healer {
 
 func (h *Healer) TriggerHeal(ctx context.Context, deadNodeID string) {
 	log.Printf("Healer triggered for dead node %s", deadNodeID)
+	metrics.HealEvents.Inc()
 	
 	// Mark chunk locations for the dead node as 'corrupted' or similar so they don't count
 	// Actually, the DB query for HealthyLocationsForChunk only checks cl.status='healthy' AND n.status='active'.

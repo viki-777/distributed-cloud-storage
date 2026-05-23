@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/metadata"
+	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/metrics"
 	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/registry"
 	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/replication"
 )
@@ -46,6 +47,8 @@ func (h *Handler) RegisterFile(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "failed to register file", http.StatusInternalServerError)
 		return
 	}
+
+	metrics.UploadOps.Inc()
 
 	uploadPlan := make([]map[string]interface{}, req.TotalChunks)
 	for i := 0; i < req.TotalChunks; i++ {
