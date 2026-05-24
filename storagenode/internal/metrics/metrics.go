@@ -25,6 +25,11 @@ var (
 		Name: "dcs_node_disk_free_bytes",
 		Help: "Total disk space available to the storage node",
 	})
+
+	GrpcRequests = promauto.NewCounterVec(prometheus.CounterOpts{
+		Name: "dcs_grpc_requests_total",
+		Help: "Total number of gRPC requests handled by this node",
+	}, []string{"method", "status"})
 )
 
 // StartMetricsUpdater runs a background goroutine to update gauges periodically

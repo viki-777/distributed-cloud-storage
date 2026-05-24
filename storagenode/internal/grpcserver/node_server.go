@@ -6,6 +6,7 @@ import (
 
 	pb "github.com/viki-777/distributed-cloud-storage/proto/dcs"
 	"github.com/viki-777/distributed-cloud-storage/storagenode/internal/chunkstore"
+	"github.com/viki-777/distributed-cloud-storage/storagenode/internal/metrics"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -46,9 +47,11 @@ func (s *NodeServer) ReplicateChunk(ctx context.Context, req *pb.ReplicateReques
 	// Write chunk to local store
 	if err := s.store.Write(req.ChunkId, resp.Data, resp.Checksum); err != nil {
 		log.Printf("Failed to store replicated chunk %s: %v", req.ChunkId, err)
+		metrics.GrpcRequests.WithLabelValues("ReplicateChunk", "error").Inc()
 		return &pb.ReplicateResponse{Success: false}, err
 	}
 
 	log.Printf("Successfully replicated chunk %s", req.ChunkId)
+	metrics.GrpcRequests.WithLabelValues("ReplicateChunk", "success").Inc()
 	return &pb.ReplicateResponse{Success: true}, nil
 }
