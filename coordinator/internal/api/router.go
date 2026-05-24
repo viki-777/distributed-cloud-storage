@@ -18,6 +18,7 @@ func NewRouter(h *Handler) *chi.Mux {
 		r.Route("/files", func(r chi.Router) {
 			r.Post("/register", h.RegisterFile)
 			r.Get("/{fileID}", h.GetFile)
+			r.Get("/{fileID}/chunk_map", h.GetFileChunkMap)
 			r.Post("/{fileID}/chunks/{chunkID}/confirm", h.ConfirmChunk)
 		})
 

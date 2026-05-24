@@ -144,6 +144,31 @@ func (h *Handler) ListNodes(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(nodes)
 }
 
+// GET /api/v1/files/{fileID}/chunk_map
+func (h *Handler) GetFileChunkMap(w http.ResponseWriter, r *http.Request) {
+	fileID := chi.URLParam(r, "fileID")
+	ctx := r.Context()
+
+	_, err := h.metadata.GetFile(ctx, fileID)
+	if err != nil {
+		http.Error(w, "file not found", http.StatusNotFound)
+		return
+	}
+
+	locations, err := h.metadata.GetChunkLocations(ctx, fileID)
+	if err != nil {
+		log.Printf("error getting chunk locations for map: %v", err)
+		http.Error(w, "failed to build chunk map", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"file_id":   fileID,
+		"chunk_map": locations,
+	})
+}
+
 // GET /api/v1/dashboard/summary
 func (h *Handler) GetDashboardSummary(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
