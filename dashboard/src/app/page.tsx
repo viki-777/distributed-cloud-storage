@@ -1,65 +1,95 @@
-import Image from "next/image";
+import { ClusterHealthBanner } from "@/components/cluster-health-banner";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Activity, Database, Server, Files } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <div className="container max-w-screen-2xl p-4 md:p-8 pt-6">
+      <div className="flex flex-col gap-2 mb-8">
+        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">System Overview</h1>
+        <p className="text-muted-foreground text-lg">Real-time telemetry and health for the Distributed Cloud Storage cluster.</p>
+      </div>
+
+      <ClusterHealthBanner />
+
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
+        <Card className="bg-card hover:bg-accent/10 transition-colors">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Grafana Dashboards</CardTitle>
+            <Activity className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">Available</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Port 3000
+            </p>
+          </CardContent>
+        </Card>
+        <Card className="bg-card hover:bg-accent/10 transition-colors">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Storage Nodes</CardTitle>
+            <Server className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">Connected</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Ports 50051-50053
+            </p>
+          </CardContent>
+        </Card>
+        <Card className="bg-card hover:bg-accent/10 transition-colors">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Metadata Store</CardTitle>
+            <Database className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">PostgreSQL</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Port 5432
+            </p>
+          </CardContent>
+        </Card>
+        <Card className="bg-card hover:bg-accent/10 transition-colors">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Coordinator API</CardTitle>
+            <Files className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">Online</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Port 8080
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card className="col-span-1 border-border/50 shadow-sm overflow-hidden flex flex-col h-[500px]">
+          <CardHeader className="bg-muted/30">
+            <CardTitle>Cluster Overview</CardTitle>
+            <CardDescription>Live metrics powered by Prometheus & Grafana</CardDescription>
+          </CardHeader>
+          <CardContent className="p-0 flex-1">
+            <iframe 
+              src="http://localhost:3000/d-solo/cluster_overview/cluster-overview?orgId=1&theme=dark&panelId=2" 
+              className="w-full h-full border-0"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+          </CardContent>
+        </Card>
+        
+        <Card className="col-span-1 border-border/50 shadow-sm overflow-hidden flex flex-col h-[500px]">
+          <CardHeader className="bg-muted/30">
+            <CardTitle>Global Disk Usage</CardTitle>
+            <CardDescription>Real-time capacity tracking across all nodes</CardDescription>
+          </CardHeader>
+          <CardContent className="p-0 flex-1">
+            <iframe 
+              src="http://localhost:3000/d-solo/cluster_overview/cluster-overview?orgId=1&theme=dark&panelId=6" 
+              className="w-full h-full border-0"
+            />
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
