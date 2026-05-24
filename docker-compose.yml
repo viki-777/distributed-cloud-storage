@@ -98,7 +98,7 @@ services:
   prometheus:
     image: prom/prometheus:v2.45.0
     ports:
-      - "9090:9090"
+      - "9092:9090"
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
