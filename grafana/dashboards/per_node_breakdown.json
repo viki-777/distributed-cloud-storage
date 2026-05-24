@@ -1,0 +1,49 @@
+{
+  "title": "Storage Node Breakdown",
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "refresh": "10s",
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Chunks Stored per Node",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "dcs_node_chunks_stored",
+          "legendFormat": "{{instance}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Disk Usage by Node",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "dcs_node_disk_used_bytes",
+          "legendFormat": "{{instance}} - Used",
+          "refId": "A"
+        },
+        {
+          "expr": "dcs_node_disk_free_bytes",
+          "legendFormat": "{{instance}} - Free",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "gRPC Request Rate by Node & Method",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 8 },
+      "targets": [
+        {
+          "expr": "rate(dcs_grpc_requests_total[1m])",
+          "legendFormat": "{{instance}} - {{method}} - {{status}}",
+          "refId": "A"
+        }
+      ]
+    }
+  ]
+}
