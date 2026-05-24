@@ -2,6 +2,7 @@ package metrics
 
 import (
 	"context"
+	"syscall"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -13,6 +14,16 @@ var (
 	ChunksStored = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "dcs_node_chunks_stored",
 		Help: "Total number of chunks stored on this node",
+	})
+
+	DiskUsedBytes = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "dcs_node_disk_used_bytes",
+		Help: "Total disk space used by the storage node",
+	})
+
+	DiskFreeBytes = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "dcs_node_disk_free_bytes",
+		Help: "Total disk space available to the storage node",
 	})
 )
 
@@ -36,4 +47,16 @@ func updateMetrics(store *chunkstore.ChunkStore) {
 	// Update total chunks stored
 	chunks := store.ListAllChunks()
 	ChunksStored.Set(float64(len(chunks)))
+
+	// Update disk usage
+	var stat syscall.Statfs_t
+	// We can use the chunk store base directory to get the stats of the filesystem it resides on
+	if err := syscall.Statfs(store.BaseDir(), &stat); err == nil {
+		total := stat.Blocks * uint64(stat.Bsize)
+		free := stat.Bavail * uint64(stat.Bsize)
+		used := total - free
+		
+		DiskUsedBytes.Set(float64(used))
+		DiskFreeBytes.Set(float64(free))
+	}
 }

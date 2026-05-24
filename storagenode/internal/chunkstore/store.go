@@ -72,6 +72,10 @@ func (s *ChunkStore) ListAllChunks() []string {
 	return chunks
 }
 
+func (s *ChunkStore) BaseDir() string {
+	return s.baseDir
+}
+
 func (s *ChunkStore) chunkPath(chunkID string) string {
 	if len(chunkID) < 2 {
 		return filepath.Join(s.baseDir, chunkID)
