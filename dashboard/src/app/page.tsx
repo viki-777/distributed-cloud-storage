@@ -21,7 +21,7 @@ export default function Home() {
           <CardContent>
             <div className="text-2xl font-bold">Available</div>
             <p className="text-xs text-muted-foreground mt-1">
-              Port 3000
+              Port 3001
             </p>
           </CardContent>
         </Card>
@@ -71,7 +71,7 @@ export default function Home() {
           </CardHeader>
           <CardContent className="p-0 flex-1">
             <iframe 
-              src="http://localhost:3000/d-solo/cluster_overview/cluster-overview?orgId=1&theme=dark&panelId=2" 
+              src="http://localhost:3001/d-solo/cluster_overview/cluster-overview?orgId=1&theme=dark&panelId=2" 
               className="w-full h-full border-0"
             />
           </CardContent>
@@ -84,7 +84,7 @@ export default function Home() {
           </CardHeader>
           <CardContent className="p-0 flex-1">
             <iframe 
-              src="http://localhost:3000/d-solo/cluster_overview/cluster-overview?orgId=1&theme=dark&panelId=6" 
+              src="http://localhost:3001/d-solo/cluster_overview/cluster-overview?orgId=1&theme=dark&panelId=6" 
               className="w-full h-full border-0"
             />
           </CardContent>

@@ -21,7 +21,7 @@ export default function NodesPage() {
           </CardHeader>
           <CardContent className="p-0 flex-1">
             <iframe 
-              src="http://localhost:3000/d-solo/per_node_breakdown/storage-node-breakdown?orgId=1&theme=dark&panelId=3" 
+              src="http://localhost:3001/d-solo/per_node_breakdown/storage-node-breakdown?orgId=1&theme=dark&panelId=3" 
               className="w-full h-full border-0"
             />
           </CardContent>
