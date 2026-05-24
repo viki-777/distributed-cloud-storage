@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"net/http"
 	"os"
 
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
 	pb "github.com/viki-777/distributed-cloud-storage/proto/dcs"
 	"github.com/viki-777/distributed-cloud-storage/storagenode/internal/chunkstore"
@@ -52,6 +54,16 @@ func main() {
 
 	// Start Prometheus metrics background updater
 	metrics.StartMetricsUpdater(context.Background(), store)
+
+	// Expose Prometheus metrics on port 9091
+	go func() {
+		metricsMux := http.NewServeMux()
+		metricsMux.Handle("/metrics", promhttp.Handler())
+		log.Printf("Storage node metrics server starting on :9091")
+		if err := http.ListenAndServe(":9091", metricsMux); err != nil {
+			log.Fatalf("metrics server failed: %v", err)
+		}
+	}()
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", grpcPort))
 	if err != nil {
