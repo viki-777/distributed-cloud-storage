@@ -11,7 +11,7 @@ export function NodeGrid() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/v1/nodes/")
+    fetch("/api/v1/nodes/")
       .then((res) => res.json())
       .then((data) => {
         setNodes(data || []);

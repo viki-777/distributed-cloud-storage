@@ -15,7 +15,7 @@ export function ChunkMap({ fileId }: ChunkMapProps) {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`http://localhost:8080/api/v1/files/${fileId}/chunk_map`)
+    fetch(`/api/v1/files/${fileId}/chunk_map`)
       .then((res) => {
         if (!res.ok) throw new Error("File map not found");
         return res.json();

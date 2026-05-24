@@ -10,13 +10,13 @@ export function ClusterHealthBanner() {
   useEffect(() => {
     // In production, we'd proxy this through Next.js API or hit coordinator directly
     // Assuming the coordinator is running at localhost:8080 or available via Docker
-    fetch("http://localhost:8080/api/v1/dashboard/summary")
+    fetch("/api/v1/dashboard/summary")
       .then((res) => res.json())
       .then((data) => setStats(data))
       .catch((err) => console.error("Error fetching summary:", err));
     
     const interval = setInterval(() => {
-      fetch("http://localhost:8080/api/v1/dashboard/summary")
+      fetch("/api/v1/dashboard/summary")
         .then((res) => res.json())
         .then((data) => setStats(data))
         .catch((err) => console.error("Error fetching summary:", err));
