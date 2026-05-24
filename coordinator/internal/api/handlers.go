@@ -144,6 +144,35 @@ func (h *Handler) ListNodes(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(nodes)
 }
 
+// GET /api/v1/dashboard/summary
+func (h *Handler) GetDashboardSummary(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	nodes, err := h.registry.HealthyNodes(ctx)
+	if err != nil {
+		log.Printf("error getting healthy nodes: %v", err)
+		http.Error(w, "failed to get node stats", http.StatusInternalServerError)
+		return
+	}
+
+	stats, err := h.metadata.GetClusterStats(ctx)
+	if err != nil {
+		log.Printf("error getting cluster stats: %v", err)
+		http.Error(w, "failed to get cluster stats", http.StatusInternalServerError)
+		return
+	}
+
+	resp := map[string]interface{}{
+		"active_nodes":            len(nodes),
+		"total_files":             stats.TotalFiles,
+		"total_chunks":            stats.TotalChunks,
+		"under_replicated_chunks": stats.UnderReplicatedChunks,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(resp)
+}
+
 // POST /api/v1/nodes/register
 func (h *Handler) RegisterNode(w http.ResponseWriter, r *http.Request) {
 	var req struct {

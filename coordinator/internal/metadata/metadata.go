@@ -116,6 +116,40 @@ func (s *Service) ChunksOnNode(ctx context.Context, nodeID string) ([]string, er
 	return chunks, nil
 }
 
+type ClusterStats struct {
+	TotalFiles            int `json:"total_files"`
+	TotalChunks           int `json:"total_chunks"`
+	UnderReplicatedChunks int `json:"under_replicated_chunks"`
+}
+
+func (s *Service) GetClusterStats(ctx context.Context) (*ClusterStats, error) {
+	var stats ClusterStats
+	
+	err := s.db.QueryRow(ctx, "SELECT COUNT(*) FROM files").Scan(&stats.TotalFiles)
+	if err != nil {
+		return nil, err
+	}
+
+	err = s.db.QueryRow(ctx, "SELECT COUNT(*) FROM chunks").Scan(&stats.TotalChunks)
+	if err != nil {
+		return nil, err
+	}
+
+	err = s.db.QueryRow(ctx, `
+		SELECT COUNT(*) FROM (
+			SELECT chunk_id FROM chunk_locations 
+			WHERE status = 'healthy' 
+			GROUP BY chunk_id 
+			HAVING COUNT(node_id) < 3
+		) sub
+	`).Scan(&stats.UnderReplicatedChunks)
+	if err != nil {
+		return nil, err
+	}
+
+	return &stats, nil
+}
+
 func (s *Service) HealthyLocationsForChunk(ctx context.Context, chunkID string) ([]models.Node, error) {
 	rows, err := s.db.Query(ctx,
 		`SELECT n.id, n.address, n.available_bytes, n.used_bytes, n.status, n.last_heartbeat 
