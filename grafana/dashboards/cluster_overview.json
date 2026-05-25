@@ -1,4 +1,6 @@
 {
+  "uid": "cluster_overview",
+  "version": 2,
   "title": "Cluster Overview",
   "timezone": "browser",
   "schemaVersion": 38,

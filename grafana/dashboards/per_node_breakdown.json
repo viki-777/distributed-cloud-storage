@@ -1,4 +1,6 @@
 {
+  "uid": "per_node_breakdown",
+  "version": 2,
   "title": "Storage Node Breakdown",
   "timezone": "browser",
   "schemaVersion": 38,
