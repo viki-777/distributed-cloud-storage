@@ -1,3 +1,5 @@
+"use client";
+
 import { ClusterHealthBanner } from "@/components/cluster-health-banner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Database, Server, Files } from "lucide-react";
