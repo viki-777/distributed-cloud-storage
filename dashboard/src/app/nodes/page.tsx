@@ -29,7 +29,7 @@ export default function NodesPage() {
           </CardHeader>
           <CardContent className="p-0 flex-1">
             <iframe 
-              src={`${grafanaHost}/d-solo/per_node_breakdown/storage-node-breakdown?orgId=1&theme=dark&panelId=3`} 
+              src={`${grafanaHost}/d-solo/bd7024e2-e950-4084-b9f2-69b25873f510/storage-node-breakdown?orgId=1&theme=dark&panelId=3`} 
               className="w-full h-full border-0"
             />
           </CardContent>

@@ -79,7 +79,7 @@ export default function Home() {
           </CardHeader>
           <CardContent className="p-0 flex-1">
             <iframe 
-              src={`${grafanaHost}/d-solo/cluster_overview/cluster-overview?orgId=1&theme=dark&panelId=5`} 
+              src={`${grafanaHost}/d-solo/e17523aa-66e9-4ff3-8d4f-9538d1a66d85/cluster-overview?orgId=1&theme=dark&panelId=5`} 
               className="w-full h-full border-0"
             />
           </CardContent>
@@ -92,7 +92,7 @@ export default function Home() {
           </CardHeader>
           <CardContent className="p-0 flex-1">
             <iframe 
-              src={`${grafanaHost}/d-solo/cluster_overview/cluster-overview?orgId=1&theme=dark&panelId=6`} 
+              src={`${grafanaHost}/d-solo/e17523aa-66e9-4ff3-8d4f-9538d1a66d85/cluster-overview?orgId=1&theme=dark&panelId=6`} 
               className="w-full h-full border-0"
             />
           </CardContent>
