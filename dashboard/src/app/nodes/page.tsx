@@ -1,7 +1,15 @@
+"use client";
+
 import { NodeGrid } from "@/components/node-grid";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState } from "react";
 
 export default function NodesPage() {
+  const [grafanaHost, setGrafanaHost] = useState("http://localhost:3001");
+
+  useEffect(() => {
+    setGrafanaHost(`http://${window.location.hostname}:3001`);
+  }, []);
   return (
     <div className="container max-w-screen-2xl p-4 md:p-8 pt-6">
       <div className="flex flex-col gap-2 mb-8">
@@ -21,7 +29,7 @@ export default function NodesPage() {
           </CardHeader>
           <CardContent className="p-0 flex-1">
             <iframe 
-              src="http://localhost:3001/d-solo/per_node_breakdown/storage-node-breakdown?orgId=1&theme=dark&panelId=3" 
+              src={`${grafanaHost}/d-solo/per_node_breakdown/storage-node-breakdown?orgId=1&theme=dark&panelId=3`} 
               className="w-full h-full border-0"
             />
           </CardContent>
