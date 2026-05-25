@@ -79,7 +79,7 @@ export default function Home() {
           </CardHeader>
           <CardContent className="p-0 flex-1">
             <iframe 
-              src={`${grafanaHost}/d-solo/cluster_overview/cluster-overview?orgId=1&theme=dark&panelId=2`} 
+              src={`${grafanaHost}/d-solo/cluster_overview/cluster-overview?orgId=1&theme=dark&panelId=5`} 
               className="w-full h-full border-0"
             />
           </CardContent>

@@ -5,6 +5,7 @@
   "refresh": "10s",
   "panels": [
     {
+      "id": 1,
       "type": "timeseries",
       "title": "Chunks Stored per Node",
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
@@ -17,6 +18,7 @@
       ]
     },
     {
+      "id": 2,
       "type": "timeseries",
       "title": "Disk Usage by Node",
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
@@ -34,6 +36,7 @@
       ]
     },
     {
+      "id": 3,
       "type": "timeseries",
       "title": "gRPC Request Rate by Node & Method",
       "gridPos": { "h": 8, "w": 24, "x": 0, "y": 8 },
