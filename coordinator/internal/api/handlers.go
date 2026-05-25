@@ -10,6 +10,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/metadata"
 	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/metrics"
+	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/models"
 	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/registry"
 	"github.com/viki-777/distributed-cloud-storage/coordinator/internal/replication"
 )
