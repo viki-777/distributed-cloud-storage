@@ -37,6 +37,27 @@ func (s *Service) GetFile(ctx context.Context, fileID string) (*models.File, err
 	return &file, err
 }
 
+func (s *Service) ListFiles(ctx context.Context) ([]models.File, error) {
+	rows, err := s.db.Query(ctx,
+		`SELECT id, name, size_bytes, chunk_size, total_chunks, checksum, created_at, status 
+		 FROM files ORDER BY created_at DESC`,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var files []models.File
+	for rows.Next() {
+		var f models.File
+		if err := rows.Scan(&f.ID, &f.Name, &f.SizeBytes, &f.ChunkSize, &f.TotalChunks, &f.Checksum, &f.CreatedAt, &f.Status); err != nil {
+			return nil, err
+		}
+		files = append(files, f)
+	}
+	return files, rows.Err()
+}
+
 func (s *Service) RegisterChunk(ctx context.Context, fileID string, chunkIndex int, chunkID string, sizeBytes int64, checksum string) error {
 	_, err := s.db.Exec(ctx,
 		`INSERT INTO chunks (file_id, chunk_index, chunk_id, size_bytes, checksum) 

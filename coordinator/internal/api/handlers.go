@@ -27,6 +27,22 @@ func NewHandler(m *metadata.Service, r *registry.Service, h *replication.Healer)
 }
 
 // POST /api/v1/files/register
+func (h *Handler) HandleListFiles(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	files, err := h.metadata.ListFiles(ctx)
+	if err != nil {
+		log.Printf("error listing files: %v", err)
+		http.Error(w, "failed to list files", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if files == nil {
+		files = make([]models.File, 0)
+	}
+	json.NewEncoder(w).Encode(files)
+}
+
 func (h *Handler) RegisterFile(w http.ResponseWriter, r *http.Request) {
 	var req struct {
 		Name        string `json:"name"`
