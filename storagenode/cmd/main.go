@@ -70,7 +70,10 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	s := grpc.NewServer()
+	s := grpc.NewServer(
+		grpc.MaxRecvMsgSize(1024*1024*100), // 100 MB
+		grpc.MaxSendMsgSize(1024*1024*100), // 100 MB
+	)
 	pb.RegisterChunkServiceServer(s, grpcserver.NewChunkServer(store))
 	pb.RegisterNodeServiceServer(s, grpcserver.NewNodeServer(store))
 

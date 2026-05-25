@@ -17,7 +17,10 @@ function getChunkClient(address) {
         oneofs: true,
     });
     const proto = grpc.loadPackageDefinition(packageDef).dcs;
-    return new proto.ChunkService(address, grpc.credentials.createInsecure());
+    return new proto.ChunkService(address, grpc.credentials.createInsecure(), {
+        'grpc.max_receive_message_length': 100 * 1024 * 1024,
+        'grpc.max_send_message_length': 100 * 1024 * 1024
+    });
 }
 
 function uploadChunkToNode(client, chunk) {
