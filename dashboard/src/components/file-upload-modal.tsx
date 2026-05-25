@@ -51,11 +51,9 @@ export function FileUploadModal({ onUploadSuccess }: { onUploadSuccess: () => vo
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="gap-2">
-          <UploadCloud className="h-4 w-4" />
-          Upload File
-        </Button>
+      <DialogTrigger render={<Button className="gap-2" />}>
+        <UploadCloud className="h-4 w-4" />
+        Upload File
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>

@@ -7,7 +7,16 @@ import path from "path";
 const COORDINATOR = process.env.COORDINATOR_URL || "http://localhost:8080";
 const PROTO_PATH = path.join(process.cwd(), "src/proto/chunk.proto");
 
+function mapLocalAddress(address: string): string {
+  if (address.startsWith("node-001")) return address.replace("node-001:50051", "localhost:50051");
+  if (address.startsWith("node-002")) return address.replace("node-002:50051", "localhost:50052");
+  if (address.startsWith("node-003")) return address.replace("node-003:50051", "localhost:50053");
+  return address;
+}
+
 function getChunkClient(address: string) {
+  const mappedAddress = mapLocalAddress(address);
+  console.log(`[gRPC] Connecting to ${mappedAddress} (original: ${address})`);
   const packageDef = protoLoader.loadSync(PROTO_PATH, {
     keepCase: true,
     longs: String,
