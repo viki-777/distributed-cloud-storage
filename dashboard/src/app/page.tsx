@@ -1,8 +1,14 @@
 import { ClusterHealthBanner } from "@/components/cluster-health-banner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Database, Server, Files } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [grafanaHost, setGrafanaHost] = useState("http://localhost:3001");
+
+  useEffect(() => {
+    setGrafanaHost(`http://${window.location.hostname}:3001`);
+  }, []);
   return (
     <div className="container max-w-screen-2xl p-4 md:p-8 pt-6">
       <div className="flex flex-col gap-2 mb-8">
@@ -71,7 +77,7 @@ export default function Home() {
           </CardHeader>
           <CardContent className="p-0 flex-1">
             <iframe 
-              src="http://localhost:3001/d-solo/cluster_overview/cluster-overview?orgId=1&theme=dark&panelId=2" 
+              src={`${grafanaHost}/d-solo/cluster_overview/cluster-overview?orgId=1&theme=dark&panelId=2`} 
               className="w-full h-full border-0"
             />
           </CardContent>
@@ -84,7 +90,7 @@ export default function Home() {
           </CardHeader>
           <CardContent className="p-0 flex-1">
             <iframe 
-              src="http://localhost:3001/d-solo/cluster_overview/cluster-overview?orgId=1&theme=dark&panelId=6" 
+              src={`${grafanaHost}/d-solo/cluster_overview/cluster-overview?orgId=1&theme=dark&panelId=6`} 
               className="w-full h-full border-0"
             />
           </CardContent>
