@@ -25,7 +25,7 @@ function getChunkClient(address: string) {
     oneofs: true,
   });
   const proto = grpc.loadPackageDefinition(packageDef) as any;
-  return new proto.dcs.ChunkService(address, grpc.credentials.createInsecure());
+  return new proto.dcs.ChunkService(mappedAddress, grpc.credentials.createInsecure());
 }
 
 function downloadChunkFromNode(client: any, chunkId: string): Promise<any> {
