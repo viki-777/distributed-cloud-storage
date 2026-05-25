@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "@/components/mode-toggle";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,7 +36,8 @@ export default function RootLayout({
                   </div>
                   <nav className="flex items-center space-x-6 text-sm font-medium text-muted-foreground">
                     <a href="/" className="transition-colors hover:text-foreground">Overview</a>
-                    <a href="/files" className="transition-colors hover:text-foreground">Files Inspector</a>
+                    <a href="/explorer" className="transition-colors hover:text-foreground">File Explorer</a>
+                    <a href="/files" className="transition-colors hover:text-foreground">Chunk Inspector</a>
                     <a href="/nodes" className="transition-colors hover:text-foreground">Storage Nodes</a>
                   </nav>
                 </div>
@@ -48,6 +50,7 @@ export default function RootLayout({
               {children}
             </main>
           </div>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

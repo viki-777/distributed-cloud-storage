@@ -4,10 +4,15 @@ import { useState } from "react";
 import { ChunkMap } from "@/components/chunk-map";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Search } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function FilesPage() {
-  const [fileId, setFileId] = useState("");
-  const [searchedId, setSearchedId] = useState("");
+function FilesContent() {
+  const searchParams = useSearchParams();
+  const initialSearch = searchParams.get("search") || "";
+  
+  const [fileId, setFileId] = useState(initialSearch);
+  const [searchedId, setSearchedId] = useState(initialSearch);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,5 +59,13 @@ export default function FilesPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function FilesPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <FilesContent />
+    </Suspense>
   );
 }
