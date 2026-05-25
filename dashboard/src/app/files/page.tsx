@@ -20,8 +20,8 @@ function FilesContent() {
   };
 
   return (
-    <div className="container max-w-screen-2xl p-4 md:p-8 pt-6">
-      <div className="flex flex-col gap-2 mb-8">
+    <div className="container mx-auto max-w-screen-2xl p-4 md:p-8 pt-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">File Inspector</h1>
         <p className="text-muted-foreground text-lg">Inspect file chunks and their distribution across the cluster.</p>
       </div>

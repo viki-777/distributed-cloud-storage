@@ -11,7 +11,7 @@ export default function NodesPage() {
     setGrafanaHost(`http://${window.location.hostname}:3001`);
   }, []);
   return (
-    <div className="container max-w-screen-2xl p-4 md:p-8 pt-6">
+    <div className="container mx-auto max-w-screen-2xl p-4 md:p-8 pt-6">
       <div className="flex flex-col gap-2 mb-8">
         <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">Storage Nodes</h1>
         <p className="text-muted-foreground text-lg">Manage and monitor physical storage instances across the cluster.</p>

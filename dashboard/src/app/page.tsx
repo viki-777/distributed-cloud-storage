@@ -12,7 +12,7 @@ export default function Home() {
     setGrafanaHost(`http://${window.location.hostname}:3001`);
   }, []);
   return (
-    <div className="container max-w-screen-2xl p-4 md:p-8 pt-6">
+    <div className="container mx-auto max-w-screen-2xl p-4 md:p-8 pt-6">
       <div className="flex flex-col gap-2 mb-8">
         <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">System Overview</h1>
         <p className="text-muted-foreground text-lg">Real-time telemetry and health for the Distributed Cloud Storage cluster.</p>
