@@ -50,6 +50,7 @@ func (h *Handler) RegisterFile(w http.ResponseWriter, r *http.Request) {
 		SizeBytes   int64  `json:"size_bytes"`
 		TotalChunks int    `json:"total_chunks"`
 		Checksum    string `json:"checksum"`
+		IsEncrypted bool   `json:"is_encrypted"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "invalid request body", http.StatusBadRequest)
@@ -58,7 +59,7 @@ func (h *Handler) RegisterFile(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
-	file, err := h.metadata.RegisterFile(ctx, req.Name, req.SizeBytes, req.TotalChunks, req.Checksum)
+	file, err := h.metadata.RegisterFile(ctx, req.Name, req.SizeBytes, req.TotalChunks, req.Checksum, req.IsEncrypted)
 	if err != nil {
 		log.Printf("error registering file: %v", err)
 		http.Error(w, "failed to register file", http.StatusInternalServerError)

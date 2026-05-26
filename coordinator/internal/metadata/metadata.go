@@ -16,30 +16,30 @@ func NewService(db *pgxpool.Pool) *Service {
 	return &Service{db: db}
 }
 
-func (s *Service) RegisterFile(ctx context.Context, name string, sizeBytes int64, totalChunks int, checksum string) (*models.File, error) {
+func (s *Service) RegisterFile(ctx context.Context, name string, sizeBytes int64, totalChunks int, checksum string, isEncrypted bool) (*models.File, error) {
 	var file models.File
 	err := s.db.QueryRow(ctx,
-		`INSERT INTO files (name, size_bytes, total_chunks, checksum) 
-		 VALUES ($1, $2, $3, $4) 
-		 RETURNING id, name, size_bytes, chunk_size, total_chunks, checksum, created_at, status`,
-		name, sizeBytes, totalChunks, checksum,
-	).Scan(&file.ID, &file.Name, &file.SizeBytes, &file.ChunkSize, &file.TotalChunks, &file.Checksum, &file.CreatedAt, &file.Status)
+		`INSERT INTO files (name, size_bytes, total_chunks, checksum, is_encrypted) 
+		 VALUES ($1, $2, $3, $4, $5) 
+		 RETURNING id, name, size_bytes, chunk_size, total_chunks, checksum, is_encrypted, created_at, status`,
+		name, sizeBytes, totalChunks, checksum, isEncrypted,
+	).Scan(&file.ID, &file.Name, &file.SizeBytes, &file.ChunkSize, &file.TotalChunks, &file.Checksum, &file.IsEncrypted, &file.CreatedAt, &file.Status)
 	return &file, err
 }
 
 func (s *Service) GetFile(ctx context.Context, fileID string) (*models.File, error) {
 	var file models.File
 	err := s.db.QueryRow(ctx,
-		`SELECT id, name, size_bytes, chunk_size, total_chunks, checksum, created_at, status 
+		`SELECT id, name, size_bytes, chunk_size, total_chunks, checksum, is_encrypted, created_at, status 
 		 FROM files WHERE id = $1`,
 		fileID,
-	).Scan(&file.ID, &file.Name, &file.SizeBytes, &file.ChunkSize, &file.TotalChunks, &file.Checksum, &file.CreatedAt, &file.Status)
+	).Scan(&file.ID, &file.Name, &file.SizeBytes, &file.ChunkSize, &file.TotalChunks, &file.Checksum, &file.IsEncrypted, &file.CreatedAt, &file.Status)
 	return &file, err
 }
 
 func (s *Service) ListFiles(ctx context.Context) ([]models.File, error) {
 	rows, err := s.db.Query(ctx,
-		`SELECT id, name, size_bytes, chunk_size, total_chunks, checksum, created_at, status 
+		`SELECT id, name, size_bytes, chunk_size, total_chunks, checksum, is_encrypted, created_at, status 
 		 FROM files ORDER BY created_at DESC`,
 	)
 	if err != nil {
@@ -50,7 +50,7 @@ func (s *Service) ListFiles(ctx context.Context) ([]models.File, error) {
 	var files []models.File
 	for rows.Next() {
 		var f models.File
-		if err := rows.Scan(&f.ID, &f.Name, &f.SizeBytes, &f.ChunkSize, &f.TotalChunks, &f.Checksum, &f.CreatedAt, &f.Status); err != nil {
+		if err := rows.Scan(&f.ID, &f.Name, &f.SizeBytes, &f.ChunkSize, &f.TotalChunks, &f.Checksum, &f.IsEncrypted, &f.CreatedAt, &f.Status); err != nil {
 			return nil, err
 		}
 		files = append(files, f)

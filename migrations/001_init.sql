@@ -7,6 +7,7 @@ CREATE TABLE files (
   chunk_size  INT NOT NULL DEFAULT 67108864,
   total_chunks INT NOT NULL,
   checksum    TEXT NOT NULL,
+  is_encrypted BOOLEAN DEFAULT false,
   created_at  TIMESTAMPTZ DEFAULT NOW(),
   status      TEXT DEFAULT 'active'
 );

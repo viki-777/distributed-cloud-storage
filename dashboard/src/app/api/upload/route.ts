@@ -53,6 +53,8 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File;
+    const isEncrypted = formData.get("is_encrypted") === "true";
+    
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
@@ -71,6 +73,7 @@ export async function POST(req: NextRequest) {
       size_bytes: totalSize,
       total_chunks: chunks.length,
       checksum: checksum,
+      is_encrypted: isEncrypted,
     });
 
     const fileId = planRes.data.file_id;

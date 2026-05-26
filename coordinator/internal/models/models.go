@@ -9,6 +9,7 @@ type File struct {
 	ChunkSize   int       `json:"chunk_size"`
 	TotalChunks int       `json:"total_chunks"`
 	Checksum    string    `json:"checksum"`
+	IsEncrypted bool      `json:"is_encrypted"`
 	CreatedAt   time.Time `json:"created_at"`
 	Status      string    `json:"status"`
 }
