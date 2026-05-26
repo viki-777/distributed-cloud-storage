@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { FileUploadModal } from "@/components/file-upload-modal";
+import { FileDecryptModal } from "@/components/file-decrypt-modal";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -13,7 +14,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FileIcon, Download, Search, HardDrive } from "lucide-react";
+import { FileIcon, Download, Search, HardDrive, Lock } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -22,13 +23,14 @@ export default function ExplorerPage() {
   const [files, setFiles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Decrypt modal state
+  const [decryptTarget, setDecryptTarget] = useState<{ id: string; name: string } | null>(null);
+
   const fetchFiles = () => {
     setLoading(true);
     fetch("/api/v1/files/")
       .then((res) => res.json())
-      .then((data) => {
-        setFiles(data || []);
-      })
+      .then((data) => setFiles(data || []))
       .catch((err) => {
         console.error(err);
         toast.error("Failed to load files from cluster");
@@ -48,9 +50,15 @@ export default function ExplorerPage() {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
   };
 
-  const handleDownload = (fileId: string) => {
+  // For plain (non-encrypted) files: direct browser redirect download
+  const handlePlainDownload = (fileId: string) => {
     toast.info("Initializing download from storage nodes...");
     window.location.href = `/api/download?fileId=${fileId}`;
+  };
+
+  // For encrypted files: open decrypt modal
+  const handleEncryptedDownload = (file: any) => {
+    setDecryptTarget({ id: file.id, name: file.name });
   };
 
   return (
@@ -99,9 +107,21 @@ export default function ExplorerPage() {
               <TableBody>
                 {files.map((file) => (
                   <TableRow key={file.id}>
-                    <TableCell className="pl-6 font-medium flex items-center gap-2">
-                      <FileIcon className="h-4 w-4 text-blue-500" />
-                      {file.name}
+                    {/* Name + optional lock badge */}
+                    <TableCell className="pl-6 font-medium">
+                      <div className="flex items-center gap-2">
+                        <FileIcon className="h-4 w-4 text-blue-500 shrink-0" />
+                        <span>{file.name}</span>
+                        {file.is_encrypted && (
+                          <Badge
+                            variant="outline"
+                            className="gap-1 text-xs border-amber-500/40 bg-amber-500/10 text-amber-400 px-1.5 py-0"
+                          >
+                            <Lock className="h-2.5 w-2.5" />
+                            E2EE
+                          </Badge>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell className="text-muted-foreground">{formatBytes(file.size_bytes)}</TableCell>
                     <TableCell>{file.total_chunks}</TableCell>
@@ -120,14 +140,27 @@ export default function ExplorerPage() {
                             <Search className="h-3.5 w-3.5" /> Inspect
                           </Button>
                         </Link>
-                        <Button 
-                          variant="default" 
-                          size="sm" 
-                          className="gap-1"
-                          onClick={() => handleDownload(file.id)}
-                        >
-                          <Download className="h-3.5 w-3.5" /> Download
-                        </Button>
+
+                        {/* Encrypted → open decrypt modal | Plain → direct download */}
+                        {file.is_encrypted ? (
+                          <Button
+                            variant="default"
+                            size="sm"
+                            className="gap-1 bg-amber-500/90 hover:bg-amber-500 text-black"
+                            onClick={() => handleEncryptedDownload(file)}
+                          >
+                            <Lock className="h-3.5 w-3.5" /> Decrypt
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="default"
+                            size="sm"
+                            className="gap-1"
+                            onClick={() => handlePlainDownload(file.id)}
+                          >
+                            <Download className="h-3.5 w-3.5" /> Download
+                          </Button>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
@@ -137,6 +170,16 @@ export default function ExplorerPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Decrypt modal — mounts only when an encrypted file is clicked */}
+      {decryptTarget && (
+        <FileDecryptModal
+          fileId={decryptTarget.id}
+          fileName={decryptTarget.name}
+          open={!!decryptTarget}
+          onClose={() => setDecryptTarget(null)}
+        />
+      )}
     </div>
   );
 }
