@@ -44,8 +44,13 @@ export function FileUploadModal({ onUploadSuccess }: { onUploadSuccess: () => vo
       }
 
       const formData = new FormData();
-      formData.append("file", uploadFile);
+      // IMPORTANT: text fields MUST come before the file blob so that
+      // the streaming server-side parser (busboy) receives metadata
+      // (file_name, file_size) before the file stream begins.
+      formData.append("file_name", file.name);
+      formData.append("file_size", String(uploadFile.size));
       formData.append("is_encrypted", String(encrypt));
+      formData.append("file", uploadFile);
 
       const res = await fetch("/api/upload", { method: "POST", body: formData });
 
