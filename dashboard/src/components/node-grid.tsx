@@ -11,16 +11,22 @@ export function NodeGrid() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/v1/nodes/")
-      .then((res) => res.json())
-      .then((data) => {
-        setNodes(data || []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching nodes:", err);
-        setLoading(false);
-      });
+    const load = () => {
+      fetch("/api/v1/nodes/")
+        .then((res) => res.json())
+        .then((data) => {
+          setNodes(data || []);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("Error fetching nodes:", err);
+          setLoading(false);
+        });
+    };
+    load();
+    // Refresh every 10 seconds so status stays live
+    const interval = setInterval(load, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   if (loading) {
@@ -44,7 +50,10 @@ export function NodeGrid() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {nodes.map((node) => {
-        const isHealthy = node.status === 'healthy';
+        // Node is healthy if status is 'active' AND heartbeat was within last 30 seconds
+        const isHealthy =
+          node.status === "active" &&
+          Date.now() - new Date(node.last_heartbeat).getTime() < 30_000;
         const lastSeen = new Date(node.last_heartbeat).toLocaleString();
 
         return (

@@ -46,7 +46,7 @@ func main() {
 	}
 
 	grpcAddr := fmt.Sprintf("%s:%s", nodeID, grpcPort)
-	hb := heartbeat.NewHeartbeater(nodeID, coordinatorURL, coordinatorGRPC, grpcAddr)
+	hb := heartbeat.NewHeartbeater(nodeID, coordinatorURL, coordinatorGRPC, grpcAddr, storageDir)
 	go hb.Start()
 
 	checker := integrity.NewChecker(nodeID, coordinatorURL, store)
