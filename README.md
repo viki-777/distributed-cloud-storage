@@ -412,25 +412,6 @@ Access Grafana at [http://localhost:3001](http://localhost:3001) (credentials: `
 
 ---
 
-## 📚 Documentation
-
-| Document | Description |
-|---|---|
-| [`DFS_IMPLEMENTATION_PLAN.md`](DFS_IMPLEMENTATION_PLAN.md) | Full 4-phase implementation plan |
-| [`docs/ADR-001-go-for-daemons.md`](docs/ADR-001-go-for-daemons.md) | Why Go for backend services |
-| [`docs/ADR-002-grpc-internal.md`](docs/ADR-002-grpc-internal.md) | Why gRPC for internal communication |
-| [`docs/ADR-003-replication-strategy.md`](docs/ADR-003-replication-strategy.md) | 3× replication design rationale |
-| [`docs/algorithms-and-concepts-deep-dive.md`](docs/algorithms-and-concepts-deep-dive.md) | Distributed systems concepts |
-| [`docs/distributed-cloud-storage-interview-bible.md`](docs/distributed-cloud-storage-interview-bible.md) | Interview preparation guide |
-
----
-
-## 🗺️ Roadmap
-
-- [x] **Phase 1** — Core upload/download across 3 nodes
-- [x] **Phase 2** — Fault tolerance & auto-healing
-- [x] **Phase 3** — Dashboard + Prometheus/Grafana monitoring
-- [ ] **Phase 4** — Kubernetes deployment, JWT authentication, production hardening
 
 ### Future Improvements
 
